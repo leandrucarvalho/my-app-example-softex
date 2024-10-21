@@ -1,11 +1,11 @@
-import { Cabecalho } from "./components/cabecalho";
+/* import { Cabecalho } from "./components/cabecalho";
 import { CustomButton } from "./components/custom-button";
 import { CustomImagem } from "./components/imagem";
 import { ListaItens } from "./components/lista-items";
 import { Paragrafo } from "./components/paragrafo";
 import { Quadrado } from "./components/quadrado";
 import { Rodape } from "./components/rodape";
-import { Titulo } from "./components/titulo";
+import { Titulo } from "./components/titulo"; */
 
 type AvatarProps = {
   size?: number;
