@@ -68,14 +68,16 @@ export default function Home() {
   const [address, setAddress] = useState();
   const [loading, setLoading] = useState(false);
   const [inputCep, setInputCep] = useState("");
+  const [estadosObtidos, setEstadosObtidos] = useState<string[]>([]);
 
   async function handleGetAddress() {
     setLoading(true);
 
     try {
       const result = await getAddress(inputCep);
-      console.log(inputCep);
       setAddress(result.logradouro);
+      estadosObtidos.unshift(result.estado);
+      setEstadosObtidos([...estadosObtidos]);
 
       console.log(result.logradouro);
     } catch (error) {
@@ -107,11 +109,11 @@ export default function Home() {
           Endereço obtido: <span>{loading ? "Carregando..." : address}</span>
         </p>
 
-        {/*         <ul>
-          {nomes.map((nome) => (
-            <li key={nome}>{nome}</li>
+        <ul>
+          {estadosObtidos.map((estado) => (
+            <li key={estado}>{estado}</li>
           ))}
-        </ul> */}
+        </ul>
 
         <ul>
           {address2.map((endereco) => (
