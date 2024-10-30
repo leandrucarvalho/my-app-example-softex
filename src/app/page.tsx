@@ -3,25 +3,16 @@
 import { getAddress } from "../../get-address";
 import { useState } from "react";
 
-/* const nomes: string[] = [
-  "Augusto César",
-  "Thiago Henrique",
-  "Leandro Carvalho",
-  "Marcos Vinicius",
-  "Lucas Henrique",
-  "Rodrigo Augusto",
-]; */
-
 interface Address {
   id: string;
   logradouro: string;
   bairro: string;
-  cidade: string;
+  localidade: string;
   estado: string;
   cep: string;
 }
 
-const address2: Address[] = [
+/* const address2: Address[] = [
   {
     id: "1",
     logradouro: "Rua 1",
@@ -62,24 +53,28 @@ const address2: Address[] = [
     estado: "PE",
     cep: "53370140",
   },
-];
+]; */
 
 export default function Home() {
   const [address, setAddress] = useState();
   const [loading, setLoading] = useState(false);
   const [inputCep, setInputCep] = useState("");
-  const [estadosObtidos, setEstadosObtidos] = useState<string[]>([]);
+  const [estadosObtidos, setEstadosObtidos] = useState<Address[]>([]);
 
   async function handleGetAddress() {
     setLoading(true);
 
     try {
       const result = await getAddress(inputCep);
-      setAddress(result.logradouro);
-      estadosObtidos.unshift(result.estado);
-      setEstadosObtidos([...estadosObtidos]);
+      if (result?.erro === "true") {
+        alert("CEP inválido");
+        return;
+      }
+      console.log(result);
 
-      console.log(result.logradouro);
+      const newAddress = [...estadosObtidos, result];
+      setEstadosObtidos(newAddress);
+      setAddress(result.logradouro);
     } catch (error) {
       console.log(error);
     } finally {
@@ -110,14 +105,8 @@ export default function Home() {
         </p>
 
         <ul>
-          {estadosObtidos.map((estado) => (
-            <li key={estado}>{estado}</li>
-          ))}
-        </ul>
-
-        <ul>
-          {address2.map((endereco) => (
-            <li key={endereco.logradouro}>{endereco.logradouro}</li>
+          {estadosObtidos.map((endereco) => (
+            <li key={endereco.localidade}>{endereco.localidade}</li>
           ))}
         </ul>
       </div>
