@@ -1,7 +1,9 @@
 "use client";
 
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { getAddress } from "../../get-address";
 import { useState } from "react";
+import { ptBR } from "date-fns/locale";
 
 interface Address {
   id: string;
@@ -10,6 +12,7 @@ interface Address {
   localidade: string;
   estado: string;
   cep: string;
+  consultedAt: Date;
 }
 
 /* const address2: Address[] = [
@@ -55,6 +58,13 @@ interface Address {
   },
 ]; */
 
+function formatDate(date: Date) {
+  const result = formatDistanceToNow(new Date(date), {
+    includeSeconds: true,
+    locale: ptBR,
+  });
+  return result;
+}
 export default function Home() {
   const [address, setAddress] = useState();
   const [loading, setLoading] = useState(false);
@@ -70,10 +80,15 @@ export default function Home() {
         alert("CEP inválido");
         return;
       }
-      console.log(result);
+      const newAddresss: Address = {
+        id: self.crypto.randomUUID(),
+        consultedAt: new Date(),
+        ...result,
+      };
+      console.log(newAddresss);
 
-      const newAddress = [...estadosObtidos, result];
-      setEstadosObtidos(newAddress);
+      // const newAddress = [...estadosObtidos, result];
+      setEstadosObtidos(estadosObtidos.concat(newAddresss));
       setAddress(result.logradouro);
     } catch (error) {
       console.log(error);
@@ -106,7 +121,9 @@ export default function Home() {
 
         <ul>
           {estadosObtidos.map((endereco) => (
-            <li key={endereco.localidade}>{endereco.localidade}</li>
+            <li key={endereco.id}>
+              {endereco.localidade}, {formatDate(endereco.consultedAt)}
+            </li>
           ))}
         </ul>
       </div>
