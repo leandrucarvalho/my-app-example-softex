@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import { formatDistanceToNow } from "date-fns";
 import { getAddress } from "../../get-address";
 import { useState } from "react";
 import { ptBR } from "date-fns/locale";
@@ -15,49 +15,6 @@ interface Address {
   consultedAt: Date;
 }
 
-/* const address2: Address[] = [
-  {
-    id: "1",
-    logradouro: "Rua 1",
-    bairro: "Centro",
-    cidade: "São Paulo",
-    estado: "SP",
-    cep: "53370140",
-  },
-  {
-    id: "2",
-    logradouro: "Rua 2",
-    bairro: "Centro 2",
-    cidade: "Recife",
-    estado: "PE",
-    cep: "53370140",
-  },
-  {
-    id: "3",
-    logradouro: "Rua 3",
-    bairro: "Ouro Preto",
-    cidade: "Olinda",
-    estado: "PE",
-    cep: "53370140",
-  },
-  {
-    id: "4",
-    logradouro: "Rua 4",
-    bairro: "Centro 4",
-    cidade: "Recife",
-    estado: "PE",
-    cep: "53370140",
-  },
-  {
-    id: "5",
-    logradouro: "Rua 5",
-    bairro: "Centro 5",
-    cidade: "Recife",
-    estado: "PE",
-    cep: "53370140",
-  },
-]; */
-
 function formatDate(date: Date) {
   const result = formatDistanceToNow(new Date(date), {
     includeSeconds: true,
@@ -65,8 +22,9 @@ function formatDate(date: Date) {
   });
   return result;
 }
+
 export default function Home() {
-  const [address, setAddress] = useState();
+  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [inputCep, setInputCep] = useState("");
   const [estadosObtidos, setEstadosObtidos] = useState<Address[]>([]);
@@ -76,19 +34,17 @@ export default function Home() {
 
     try {
       const result = await getAddress(inputCep);
-      if (result?.erro === "true") {
+      if (result?.erro) {
         alert("CEP inválido");
         return;
       }
-      const newAddresss: Address = {
+      const newAddress: Address = {
         id: self.crypto.randomUUID(),
         consultedAt: new Date(),
         ...result,
       };
-      console.log(newAddresss);
 
-      // const newAddress = [...estadosObtidos, result];
-      setEstadosObtidos(estadosObtidos.concat(newAddresss));
+      setEstadosObtidos((prev) => [...prev, newAddress]);
       setAddress(result.logradouro);
     } catch (error) {
       console.log(error);
@@ -119,13 +75,31 @@ export default function Home() {
           Endereço obtido: <span>{loading ? "Carregando..." : address}</span>
         </p>
 
-        <ul>
-          {estadosObtidos.map((endereco) => (
-            <li key={endereco.id}>
-              {endereco.localidade}, {formatDate(endereco.consultedAt)}
-            </li>
-          ))}
-        </ul>
+        <h2 className="mt-4 font-bold">Histórico de endereços:</h2>
+        <table className="table-auto border-collapse border border-gray-500 w-full mt-4 bg-primary text-white">
+          <thead>
+            <tr>
+              <th className="border border-black px-4 py-2">Rua</th>
+              <th className="border border-black px-4 py-2">Bairro</th>
+              <th className="border border-black px-4 py-2">Cidade</th>
+              <th className="border border-black px-4 py-2">Estado</th>
+              <th className="border border-black px-4 py-2">CEP</th>
+              <th className="border border-black px-4 py-2">Consultado Há</th>
+            </tr>
+          </thead>
+          <tbody>
+            {estadosObtidos.map((endereco) => (
+              <tr key={endereco.id}>
+                <td className="border border-black px-4 py-2">{endereco.logradouro}</td>
+                <td className="border border-black px-4 py-2">{endereco.bairro}</td>
+                <td className="border border-black px-4 py-2">{endereco.localidade}</td>
+                <td className="border border-black px-4 py-2">{endereco.estado}</td>
+                <td className="border border-black px-4 py-2">{endereco.cep}</td>
+                <td className="border border-black px-4 py-2">{formatDate(endereco.consultedAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
