@@ -2,7 +2,7 @@
 
 import { formatDistanceToNow } from "date-fns";
 import { getAddress } from "../../get-address";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ptBR } from "date-fns/locale";
 
 interface Address {
@@ -27,7 +27,7 @@ export default function Home() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [inputCep, setInputCep] = useState("");
-  const [estadosObtidos, setEstadosObtidos] = useState<Address[]>([]);
+  const [estadosObtidos, setEstadosObtidos] = useState<Address[] | null>(null);
 
   async function handleGetAddress() {
     setLoading(true);
@@ -44,7 +44,7 @@ export default function Home() {
         ...result,
       };
 
-      setEstadosObtidos((prev) => [...prev, newAddress]);
+      setEstadosObtidos([...(estadosObtidos || []), newAddress]);
       setAddress(result.logradouro);
     } catch (error) {
       console.log(error);
@@ -52,6 +52,23 @@ export default function Home() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    const result = localStorage.getItem("estadosObtidos");
+    console.log(result);
+
+    if (result !== null) {
+      console.log(JSON.parse(result));
+      setEstadosObtidos(JSON.parse(result));
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log("Estados teve mudança");
+    if (estadosObtidos === null) return;
+
+    localStorage.setItem("estadosObtidos", JSON.stringify(estadosObtidos));
+  }, [estadosObtidos]);
 
   return (
     <>
@@ -88,14 +105,26 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            {estadosObtidos.map((endereco) => (
+            {estadosObtidos?.map((endereco) => (
               <tr key={endereco.id}>
-                <td className="border border-black px-4 py-2">{endereco.logradouro}</td>
-                <td className="border border-black px-4 py-2">{endereco.bairro}</td>
-                <td className="border border-black px-4 py-2">{endereco.localidade}</td>
-                <td className="border border-black px-4 py-2">{endereco.estado}</td>
-                <td className="border border-black px-4 py-2">{endereco.cep}</td>
-                <td className="border border-black px-4 py-2">{formatDate(endereco.consultedAt)}</td>
+                <td className="border border-black px-4 py-2">
+                  {endereco.logradouro}
+                </td>
+                <td className="border border-black px-4 py-2">
+                  {endereco.bairro}
+                </td>
+                <td className="border border-black px-4 py-2">
+                  {endereco.localidade}
+                </td>
+                <td className="border border-black px-4 py-2">
+                  {endereco.estado}
+                </td>
+                <td className="border border-black px-4 py-2">
+                  {endereco.cep}
+                </td>
+                <td className="border border-black px-4 py-2">
+                  {formatDate(endereco.consultedAt)}
+                </td>
               </tr>
             ))}
           </tbody>
