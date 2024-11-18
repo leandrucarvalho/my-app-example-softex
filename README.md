@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Projeto de Consulta de Endereço com CEP
 
-## Getting Started
+Este projeto é uma aplicação em React que permite ao usuário consultar endereços com base em um CEP digitado. Os endereços consultados são armazenados em um histórico e salvos no `localStorage` do navegador para que possam ser acessados posteriormente.
 
-First, run the development server:
+## Tecnologias Utilizadas
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **React**: Biblioteca JavaScript para construção de interfaces de usuário.
+- **date-fns**: Biblioteca para manipulação de datas, usada para formatar datas em relação ao tempo atual.
+- **TypeScript**: Linguagem que adiciona tipagem estática ao JavaScript.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Funcionalidades
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Consulta de Endereço**:
+   - O usuário digita um CEP válido e clica no botão "Obter endereço".
+   - A aplicação faz uma requisição assíncrona para buscar os dados do endereço.
+   - Em caso de erro (CEP inválido), uma mensagem de alerta é exibida.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Exibição de Endereço**:
+   - O endereço consultado é exibido na tela.
 
-## Learn More
+3. **Histórico de Endereços**:
+   - Os endereços consultados são salvos em um histórico que é exibido em uma tabela.
+   - As entradas da tabela incluem detalhes como rua, bairro, cidade, estado, CEP e o tempo desde a consulta.
+   - O histórico é persistido no `localStorage` e é carregado quando a página é recarregada.
 
-To learn more about Next.js, take a look at the following resources:
+## Estrutura do Código
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Componente Principal
+O componente principal `Home` é responsável por:
+- Capturar o CEP digitado pelo usuário.
+- Executar a requisição assíncrona para obter o endereço.
+- Renderizar o resultado da busca e o histórico de endereços consultados.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Interface `Address`
+Define a estrutura de um endereço com os seguintes campos:
+- `id`: Identificador único.
+- `logradouro`, `bairro`, `localidade`, `estado`, `cep`: Detalhes do endereço.
+- `consultedAt`: Data e hora em que o endereço foi consultado.
 
-## Deploy on Vercel
+### Hooks Utilizados
+- **useState**: Para gerenciar o estado dos endereços, o CEP digitado e o status de carregamento.
+- **useEffect**: Para carregar e salvar o histórico de endereços no `localStorage`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Como Executar o Projeto
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone o repositório.
+   ```bash
+   git clone <URL_DO_REPOSITORIO>
+   ```
+2. Instale as dependências.
+   ```bash
+   npm install
+   ```
+3. Inicie o projeto.
+   ```bash
+   npm start
+   ```
+4. Acesse a aplicação em `http://localhost:3000` no seu navegador.
+
+## Melhorias Futuras
+- Implementar validação mais robusta para o CEP.
+- Adicionar testes unitários para garantir a funcionalidade correta.
+- Melhorar a interface com mensagens de erro mais detalhadas.
+
+## Considerações
+Este projeto foi desenvolvido com fins educativos para ilustrar o uso de hooks, manipulação de estado e armazenamento no `localStorage` em uma aplicação React.
+
